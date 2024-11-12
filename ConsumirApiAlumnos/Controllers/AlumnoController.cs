@@ -19,7 +19,6 @@ namespace ConsumirApiAlumnos.Controllers
 
         public async Task ObtenerAlumnosAsync() 
         {
-            
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
@@ -36,13 +35,36 @@ namespace ConsumirApiAlumnos.Controllers
                 }
             }
         }
-
-        public async Task EliminarAlumnosAsync(int Id) 
+        public async Task InsertarAlumnoAsync(Alumno alumno)
         {
-            //client.DefaultRequestHeaders.Accept.Clear();
-            //client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            var json = JsonConvert.SerializeObject(alumno);
+            var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+
+            HttpResponseMessage response = await client.PostAsync("AlumnosApi/Alumnos", content);
+            if (response.IsSuccessStatusCode)
+            {
+                Console.WriteLine("Alumno creado con éxito.");
+            }
+        }
+
+        public async Task ActualizarAlumnoAsync(int id, Alumno alumno)
+        {
+            var json = JsonConvert.SerializeObject(alumno);
+            var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+
+            HttpResponseMessage response = await client.PutAsync($"api/productos/{id}", content);
+            if (response.IsSuccessStatusCode)
+            {
+                Console.WriteLine("Alumno actualizado con éxito.");
+            }
+        }
+
+        public async Task EliminarAlumnosAsync(int Id)
+        {
+            client.DefaultRequestHeaders.Accept.Clear();
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             Console.WriteLine($"ID:{Id}");
-            HttpResponseMessage response = await client.DeleteAsync("AlumnosApi/Alumnos/{id}");
+            HttpResponseMessage response = await client.DeleteAsync($"AlumnosApi/Alumnos/{Id}");
 
             if (response.IsSuccessStatusCode)
             {
@@ -56,7 +78,9 @@ namespace ConsumirApiAlumnos.Controllers
             {
                 Console.WriteLine($"Error al eliminar el alumno con ID {Id}: {response.ReasonPhrase}");
             }
-
         }
     }
+
+        
+    
 }
